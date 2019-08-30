@@ -191,3 +191,31 @@ void set_list_iterator( dllist *list, size_t loc )
    }
 }
 
+void *list_remove( void *content, dllist *list )
+{
+   dllnode *node;
+   if( !content || !list )
+      return NULL;
+
+   node = list->head;
+   while( node )
+   {
+      if( content == node->content )
+         break;
+      node = node->next;
+   }
+
+   if( !node ) /* Content not in list */
+      return NULL;
+
+   if( list->head == node )
+      list->head = node->next;
+   if( list->tail == node )
+      list->tail = node->prev;
+   if( node->prev )
+      node->prev->next = node->next;
+   if( node->next )
+      node->next->prev = node->prev;
+   free( node );
+   return content;
+}

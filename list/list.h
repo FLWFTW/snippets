@@ -19,6 +19,7 @@ void *next_in_list( dllist *list );
 void *prev_in_list( dllist *list );
 void reset_list_iterator( dllist *list );
 void set_list_iterator( dllist *list, size_t loc );
+void *list_remove( void *content, dllist *list );
 
 struct s_list
 {
