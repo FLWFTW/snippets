@@ -55,6 +55,7 @@ hash_table *new_hash_table()
    hash_table *table = calloc( 1, sizeof( hash_table ) );
    if( table == NULL )
       return NULL;
+
    size_t i;
    for( i = 0; i < MAX_BUCKETS; i++ )
       table->buckets[i] = NULL;
@@ -62,26 +63,32 @@ hash_table *new_hash_table()
    return table;
 }
 
-void free_hash_table( hash_table *table )
+void free_hash_table( hash_table *table, void(*func)( void *content ) )
 {
    if( table->size > 0 )
    {
       size_t i;
       for( i = 0; i < MAX_BUCKETS; i++ )
+      {
+         if( func )
+         {
+            func( table->buckets[i]->content );
+         }
          free( table->buckets[i] );
+      }
    }
    free( table );
    return;
 }
 
-bool hash_add( void *content, char *key, hash_table *table )
+int hash_add( void *content, char *key, hash_table *table )
 {
    unsigned long hash = sdbm( key );
    hash %= MAX_BUCKETS;
    hash_bucket *bucket;
    if( table->size >= MAX_BUCKETS ) /*Hash table is full*/
-      return false;
-   while( ( bucket = table->buckets[hash] ) != NULL && hash < MAX_BUCKETS )
+      return 1;
+   while( ( bucket = table->buckets[hash] ) != NULL )
    {
       if( !strcmp( key, bucket->key ) )
          break;
@@ -92,6 +99,8 @@ bool hash_add( void *content, char *key, hash_table *table )
    if( bucket == NULL )/*new*/
    {
       bucket = calloc( 1, sizeof( hash_bucket ) );
+      if( bucket == NULL )
+         return 2;
       bucket->key = strdup( key );
       bucket->content = content;
       bucket->hash = hash;
@@ -103,7 +112,7 @@ bool hash_add( void *content, char *key, hash_table *table )
       bucket->content = content;
    }
 
-   return true;
+   return 0;
 }
 
 void hash_mod( void *content, char *key, hash_table *table )
