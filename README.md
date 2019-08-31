@@ -21,7 +21,7 @@ A generic hash table
 - `void hash_del( char *key, hash_table *table )` Deletes the item specified by key from the hash table. Note: This does not free any memory allocated to the specific item.
 - `void hash_mod( void *content, char *key, hash_table *table )` Modifies the specified item in the hash table.
 
-## Dictionary
+## dictionary
 A generic dictionary.
 - `dictionary *alloc_dictionary()` Creates a new dictionary.
 - `void free_dictionary( dictionary *d )` Frees the specified dictionary.
