@@ -22,12 +22,13 @@ static size_t find_in_list( void *content, dllist *list )
    dllnode *ptr = list->head;
    if( !ptr )
       return 0;
-   while( ( ptr = ptr->next ) != NULL )
+   do
    {
       loc++;
       if( content == ptr->content )
          break;
-   }
+   }while( ( ptr = ptr->next ) != NULL );
+
    if( ptr == NULL )
       return 0;
    return loc;

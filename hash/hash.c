@@ -32,13 +32,13 @@ int strcmp( const char *str1, const char *str2 )
 char *strdup( char *str1 )
 {
    size_t len = strlen( str1 );
-   char *ret = calloc( len, sizeof( char ) );
+   char *ret = calloc( len + 1, sizeof( char ) );
    memcpy( ret, str1, len );
 
    return ret;
 }
 
-/*copied from http://www.cse.yorku.ca/~oz/hash.html*/
+/*copied from http://www.cse.yorku.ca/~oz/hash.html
 static unsigned long sdbm( char *str )
 {
     unsigned long hash = 0;
@@ -48,6 +48,16 @@ static unsigned long sdbm( char *str )
         hash = c + (hash << 6) + (hash << 16) - hash;
 
     return hash;
+}
+*/
+
+unsigned long
+fnv1a(const char *s)
+{
+    unsigned long hash = 0x811c9dc5;
+    while (*s)
+        hash = (hash ^ *s++) * 16777619;
+    return hash & 0xffffffff;
 }
 
 hash_table *new_hash_table()
@@ -83,7 +93,7 @@ void free_hash_table( hash_table *table, void(*func)( void *content ) )
 
 int hash_add( void *content, char *key, hash_table *table )
 {
-   unsigned long hash = sdbm( key );
+   unsigned long hash = fnv1a( key );
    hash %= MAX_BUCKETS;
    hash_bucket *bucket;
    if( table->size >= MAX_BUCKETS ) /*Hash table is full*/
@@ -124,7 +134,7 @@ void hash_mod( void *content, char *key, hash_table *table )
 
 void *hash_get( char *key, hash_table *table )
 {
-   unsigned long hash = sdbm( key );
+   unsigned long hash = fnv1a( key );
    hash_bucket *bucket;
    hash %= MAX_BUCKETS;
 
@@ -144,7 +154,7 @@ void *hash_get( char *key, hash_table *table )
 
 void hash_del( char *key, hash_table *table )
 {
-   unsigned long hash = sdbm( key );
+   unsigned long hash = fnv1a( key );
    hash %= MAX_BUCKETS;
    hash_bucket *bucket;
    if( table->size == 0 )

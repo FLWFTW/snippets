@@ -6,10 +6,10 @@ int main( int argc, char *argv[] )
 {
    hash_table *table = new_hash_table();
    
-   if( hash_add( strdup( "This is the first content." ), "first", table ) != 0 )
+   if( hash_add( ( "This is the first content." ), "first", table ) != 0 )
       fprintf( stdout, "Error!" );
-   hash_add( strdup( "This is the second content." ), "second", table );
-   hash_add( strdup( "This is the third content." ), "third", table );
+   hash_add( ( "This is the second content." ), "second", table );
+   hash_add( ( "This is the third content." ), "third", table );
 
    fprintf( stdout, "First content: %s\n", (char *)hash_get( "first", table ) );
    fprintf( stdout, "Second content: %s\n", (char *)hash_get( "second", table ) );
